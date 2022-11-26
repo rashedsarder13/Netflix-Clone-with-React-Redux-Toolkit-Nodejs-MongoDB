@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import logo from "../assets/logo.png";
 import { FaPowerOff, FaSearch } from "react-icons/fa";
 import { firebaseAuth } from "../utils/firebase-config";
-import { signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 const links = [
   { name: "Home", link: "/" },
   { name: "TV shows", link: "/tv" },
@@ -14,6 +14,15 @@ const links = [
 export default function Navbar({ isScrolled }) {
   const [showSearch, setShowSearch] = useState(false);
   const [inputHover, setInputHover] = useState(false);
+  const navigate = useNavigate();
+  const handleSignOut = () => {
+    signOut(firebaseAuth);
+    onAuthStateChanged(firebaseAuth, (currentUser) => {
+      if (!currentUser) {
+        navigate("/login");
+      }
+    });
+  };
   return (
     <Container>
       <div className={`flex nav ${isScrolled ? "scrolled" : ""}`}>
@@ -25,7 +34,12 @@ export default function Navbar({ isScrolled }) {
             {links.map((item, index) => {
               return (
                 <li key={index}>
-                  <Link to={item.link}>{item.name}</Link>
+                  <Link
+                    style={{ color: "white", textDecoration: "none" }}
+                    to={item.link}
+                  >
+                    {item.name}
+                  </Link>
                 </li>
               );
             })}
@@ -34,6 +48,7 @@ export default function Navbar({ isScrolled }) {
         <div className="right flex a-center">
           <div className={`search ${showSearch ? "show-search" : ""}`}>
             <button
+              title="Search"
               onFocus={() => setShowSearch(true)}
               onBlur={() => {
                 if (!inputHover) setShowSearch(false);
@@ -52,7 +67,7 @@ export default function Navbar({ isScrolled }) {
               }}
             />
           </div>
-          <button onClick={() => signOut(firebaseAuth)}>
+          <button onClick={handleSignOut} title="Log Out">
             <FaPowerOff />
           </button>
         </div>
@@ -86,16 +101,12 @@ const Container = styled.div`
       .links {
         list-style-type: none;
         gap: 2rem;
-        li {
-          color: white;
-          text-decoration: none;
-        }
       }
     }
     .right {
       gap: 1rem;
       button {
-        backround-color: transparent;
+        background-color: transparent;
         border: none;
         cursor: pointer;
         &:focus {
@@ -123,6 +134,23 @@ const Container = styled.div`
           width: 0;
           opacity: 0;
           visibility: hidden;
+          transition: 0.3s ease-in-out;
+          background-color: transparent;
+          border: none;
+          color: white;
+          &:focus {
+            outline: none;
+          }
+        }
+      }
+      .show-search {
+        border: 1px solid white;
+        background-color: rgba(0, 0, 0, 0.6);
+        input {
+          width: 100%;
+          opacity: 1;
+          visibility: visible;
+          padding: 0.3rem;
         }
       }
     }
