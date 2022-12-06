@@ -6,15 +6,28 @@ import styled from "styled-components";
 import Card from "./Card";
 
 export const CardSlider = ({ data, title }) => {
-  const [showControls, setShowControls] = useState(false);
-  const [sliderPosition, setSliderPosition] = useState(0);
   const listRef = useRef();
-  const handleDirection = () => {};
+  const [sliderPosition, setSliderPosition] = useState(0);
+  const [showControls, setShowControls] = useState(false);
+
+  const handleDirection = (direction) => {
+    let distance = listRef.current.getBoundingClientRect().x - 70;
+    if (direction === "left" && sliderPosition > 0) {
+      listRef.current.style.transform = `translateX(${250 + distance}px)`;
+      setSliderPosition(sliderPosition - 1);
+    }
+    if (direction === "right" && sliderPosition < 5) {
+      listRef.current.style.transform = `translateX(${-250 + distance}px)`;
+      setSliderPosition(sliderPosition + 1);
+    }
+  };
+
   return (
     <Container
       className="flex column"
+      showControls={showControls}
       onMouseEnter={() => setShowControls(true)}
-      onmouseLeave={() => setShowControls(false)}
+      onMouseLeave={() => setShowControls(false)}
     >
       <h1>{title}</h1>
       <div className="wrapper">
@@ -25,7 +38,7 @@ export const CardSlider = ({ data, title }) => {
         >
           <AiOutlineLeft onClick={() => handleDirection("left")} />
         </div>
-        <div className="flex slider" ref={listRef}>
+        <div className="slider flex" ref={listRef}>
           {data.map((movie, index) => {
             return <Card movieData={movie} index={index} key={movie.id} />;
           })}
@@ -47,7 +60,7 @@ const Container = styled.div`
   position: relative;
   padding: 2rem 0;
   h1 {
-    marginleft: 50px;
+    margin-left: 50px;
   }
   .wrapper {
     .slider {
@@ -62,8 +75,21 @@ const Container = styled.div`
       z-index: 99;
       height: 100%;
       top: 0;
+      bottom: 0;
       width: 50px;
       transition: 0.3s ease-in-out;
+      svg {
+        font-size: 2rem;
+      }
+    }
+    .none {
+      display: none;
+    }
+    .left {
+      left: 0;
+    }
+    .right {
+      right: 0;
     }
   }
 `;
