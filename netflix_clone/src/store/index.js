@@ -4,7 +4,7 @@ import {
     createSlice,
 } from "@reduxjs/toolkit";
 import axios from "axios";
-import { API_KEY, TMDB_BASE_URL } from "../utils/constant";
+import { API_KEY, TMDB_BASE_URL } from "../utils/constants";
 
 const initialState = {
     movies: [],
@@ -28,14 +28,13 @@ const createArrayFromRawData = (array, moviesArray, genres) => {
             const name = genres.find(({ id }) => id === genre);
             if (name) movieGenres.push(name.name);
         });
-        if (movie.backdrop_path) {
+        if (movie.backdrop_path)
             moviesArray.push({
                 id: movie.id,
-                name: movie.original_name ? movie.original_name : movie.original_title,
+                name: movie && movie.original_name ? movie.original_name : movie.original_title,
                 image: movie.backdrop_path,
                 genres: movieGenres.slice(0, 3),
             });
-        }
     });
 };
 
