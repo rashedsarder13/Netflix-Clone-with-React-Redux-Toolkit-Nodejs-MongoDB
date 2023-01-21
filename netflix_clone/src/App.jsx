@@ -6,6 +6,7 @@ import TVShows from "./pages/TVShows";
 import NetFlix from "./pages/NetFlix";
 import Player from "./pages/Player";
 import SignUp from "./pages/SignUp";
+import UserListedMovies from "./pages/UserListedMovies";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
         <Route exact path="/player" element={<Player />} />
         <Route exact path="/movies" element={<MoviePage />} />
         <Route exact path="/tv" element={<TVShows />} />
+        <Route exact path="/my-list" element={<UserListedMovies />} />
         <Route exact path="/" element={<NetFlix />} />
       </Routes>
     </Router>
